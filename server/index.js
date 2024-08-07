@@ -1,6 +1,9 @@
 const express = require('express');
 const summarizeText = require('./services/summarize');
+const cors = require('cors');
+
 const app = express();
+app.use(cors());
 const PORT = 3000;
 
 app.use(express.json());
@@ -10,7 +13,7 @@ app.use(express.json());
 app.post('/summarize', async(req, res) => {
     // console.log(req.body)
     const summarizedText = await summarizeText(req.body.inputs);
-    console.log(summarizedText)
+    // console.log(summarizedText)
     res.send(JSON.stringify(summarizedText));
 })
 
