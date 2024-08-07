@@ -1,5 +1,6 @@
 const express = require('express');
 const summarizeText = require('./services/summarize');
+const translateText = require('./services/translate');
 const cors = require('cors');
 
 const app = express();
@@ -13,14 +14,14 @@ app.use(express.json());
 app.post('/summarize', async(req, res) => {
     // console.log(req.body)
     const summarizedText = await summarizeText(req.body.inputs);
-    // console.log(summarizedText)
     res.send(JSON.stringify(summarizedText));
 })
 
 // 2. API ENDPOINT to translate the summarized text to the selected language
-app.post('/translate', (req, res) => {
-    console.log("Translate")
-    res.send("Translate")
+app.post('/translate', async(req, res) => {
+    const { text, source, target } = req.body;
+    const translatedText = await translateText(text, source, target)    
+    res.send(JSON.stringify(translatedText));
 })
 
 app.listen(PORT, () => {
