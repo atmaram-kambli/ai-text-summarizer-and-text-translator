@@ -5,11 +5,13 @@ import './App.css'
 function App() {
   const [textToSummarize, setTextToSummarize] = useState("");
   const [textToTranslate, setTextToTranslate] = useState("");
+  const [summarizedText, setSummarizedText] = useState("");
   
-  const [language, setLanguage] = useState("Hindi")
+  const [language, setLanguage] = useState("hi")
 
   const handleOnSubmitSummarize = async(e) => {
     e.preventDefault();
+    try {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -19,7 +21,27 @@ function App() {
       },
       data: JSON.stringify({ inputs: textToSummarize }), 
     }
+      let response = await axios.request(config);
+      // console.log(response.data);
+      setTextToTranslate(response.data);
+      setSummarizedText(response.data)
+    } catch (error) {
+      console.error('Error occurred:', error.message);
+      console.error('Error response:', error.response);
+    }
+  }
+  
+  const handleOnSubmitTranlate = async(e) => {
+    e.preventDefault();
     try {
+    let config = {
+      method: "post",
+      url: "http://localhost:3000/translate",
+      headers: {
+        'Content-Type': "application/json",
+      },
+      data: JSON.stringify({ text: summarizedText, source: "en", target: language }), 
+    }
       let response = await axios.request(config);
       // console.log(response.data);
       setTextToTranslate(response.data);
@@ -28,10 +50,9 @@ function App() {
       console.error('Error response:', error.response);
     }
   }
-  
-  const handleOnSubmitTranlate = (e) => {
-    e.preventDefault();
-    console.log(textToTranslate)
+
+  const handleOnChangeLanguage = (e) => {
+      setLanguage(e.target.value)
   }
 
   return (
@@ -50,15 +71,15 @@ function App() {
           <textarea id="summary" value={textToTranslate} onChange={(e) => setTextToTranslate(e.target.value)} className='h-72 resize-none border-none p-2 mb-2 text-cyan-950' name="summarized_text" placeholder="Summarized text will appear here"></textarea>
           <button id="submit-button" className="rounded bg-blue-100 py-1 mb-1 text-cyan-600">
             {/* <span className="submit-button-text">Hindi</span> */}
-            <select name="language" value={language} onChange={(e) => setLanguage(e.target.value)} className='bg-inherit'>
-              <option value="Hindi">Hindi</option>
-              <option value="Marathi">Marathi</option>
-              <option value="Mandarin">Mandarin</option>
-              <option value="French">French</option>
+            <select name="language" value={language} onChange={handleOnChangeLanguage} className='bg-inherit'>
+              <option value="hi">Hindi</option>
+              <option value="fr">French</option>
+              <option value="ru">Russian</option>
+              <option value="de">German</option>
             </select>
             {/* <span className='font-bold'> +</span> */}
           </button>
-          <button id="submit-button" onClick={handleOnSubmitTranlate} className="rounded bg-cyan-700 py-2 px-4">
+          <button id="submit-button" onClick={handleOnSubmitTranlate} className="rounded bg-cyan-700 py-2 px-4" >
             <span className="submit-button-text">Translate</span>
           </button>
         </div>

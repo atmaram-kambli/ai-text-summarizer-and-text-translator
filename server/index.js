@@ -21,7 +21,7 @@ app.post('/summarize', async(req, res) => {
 app.post('/translate', async(req, res) => {
     const { text, source, target } = req.body;
     const translatedText = await translateText(text, source, target)    
-    res.send(JSON.stringify(translatedText));
+    res.send(translatedText);
 })
 
 app.listen(PORT, () => {
