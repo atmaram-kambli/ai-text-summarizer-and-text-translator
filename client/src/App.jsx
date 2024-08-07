@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import axios from 'axios';
 import './App.css'
 
 function App() {
@@ -7,9 +8,25 @@ function App() {
   
   const [language, setLanguage] = useState("Hindi")
 
-  const handleOnSubmitSummarize = (e) => {
+  const handleOnSubmitSummarize = async(e) => {
     e.preventDefault();
-    console.log(textToSummarize)
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "http://localhost:3000/summarize",
+      headers: {
+        'Content-Type': "application/json",
+      },
+      data: JSON.stringify({ inputs: textToSummarize }), 
+    }
+    try {
+      let response = await axios.request(config);
+      // console.log(response.data);
+      setTextToTranslate(response.data);
+    } catch (error) {
+      console.error('Error occurred:', error.message);
+      console.error('Error response:', error.response);
+    }
   }
   
   const handleOnSubmitTranlate = (e) => {
